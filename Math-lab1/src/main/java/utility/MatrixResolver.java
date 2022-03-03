@@ -32,15 +32,23 @@ public class MatrixResolver {
 
         logOwnMatrix();
 
-        //Выразить переменные
+        // Get values
         getXValues();
 
         logOwnMatrix();
 
         //Проверить условие сходимости
+        if (!isConvergenceCondition()) return Optional.empty();
+
+        Double[] freeElements = getFreeElements();
+        Double[] previousIterationElements = getFreeElements();
+        int iterationNumber = 1;
 
         //Сам способ итеративный
-
+        while (calculateAnswer(matrix.getMatrixValues(), previousIterationElements, freeElements, matrix.getEpsilon(), iterationNumber)) {
+            iterationNumber += 1;
+        }
+        
         return Optional.of(new Double[0]);
 
     }
@@ -157,5 +165,85 @@ public class MatrixResolver {
         for (int i = 0; i < matrix.getRowSize(); i++) {
             matrix.getMatrixValues()[rowNumber][i] /= k;
         }
+        matrix.getMatrixValues()[rowNumber][matrix.getRowSize()] /= Math.abs(k);
+    }
+
+    private boolean isConvergenceCondition() {
+        return (getMaxAbsRowSum() < 1);
+    }
+
+    private double getMaxAbsRowSum() {
+        double maxResult = 0;
+
+        for (int i = 0; i < matrix.getColumnSize(); i++) {
+            double maxAbsRowSum = getAbsRowSum(i);
+
+            if (maxResult == 0 && maxResult <= maxAbsRowSum) maxResult = maxAbsRowSum;
+        }
+
+        return maxResult;
+    }
+
+    private double getAbsRowSum(int rowNumber) {
+        double result = 0;
+
+        for (int i = 0; i < matrix.getRowSize(); i++) {
+            result += Math.abs(matrix.getMatrixValues()[rowNumber][i]);
+        }
+
+        return result;
+    }
+
+    private Double[] getFreeElements() {
+        Double[] freeElements = new Double[matrix.getColumnSize()];
+
+        for (int i = 0; i < matrix.getColumnSize(); i++) {
+            freeElements[i] = matrix.getMatrixValues()[i][matrix.getRowSize()];
+        }
+
+        return freeElements;
+    }
+
+    public boolean calculateAnswer(Double[][] coefficientMatrix, Double[] previousIteration, Double[] freeCoefficient, double epsilon, int iterationNumber) {
+        double resultEpsilon = Double.MIN_VALUE;
+        double[] result = new double[previousIteration.length];
+        for (int i = 0; i < coefficientMatrix.length; i++) {
+            result[i] = 0;
+            for (int j = 0; j < coefficientMatrix.length; j++) {
+                result[i] += coefficientMatrix[i][j] * previousIteration[j];
+            }
+            result[i] += freeCoefficient[i];
+        }
+        for (int i = 0; i < result.length; i++) {
+            if (Math.abs(result[i] - previousIteration[i]) > resultEpsilon) {
+                resultEpsilon = Math.abs(result[i] - previousIteration[i]);
+            }
+            previousIteration[i] = result[i];
+        }
+        printFormatAnswer(result, resultEpsilon);
+        if (resultEpsilon > epsilon) {
+            return true;
+        } else {
+            printAnswer(result, resultEpsilon, iterationNumber);
+            return false;
+        }
+    }
+
+    public void printFormatAnswer(double[] answers, double epsilon) {
+        for (double answer : answers) {
+            System.out.format(" %f", answer);
+        }
+        System.out.format(" %f", epsilon);
+        System.out.println();
+        System.out.println("-----------------------------");
+    }
+
+    public void printAnswer(double[] result, double epsilon, int iterationNumber) {
+        System.out.println("Ответ:");
+        for (int i = 1; i <= result.length; i++) {
+            System.out.println("x" + i + " = " + result[i - 1]);
+        }
+        System.out.println("Конечная точность: " + epsilon);
+        System.out.println("Номер итерации: " + iterationNumber);
     }
 }
