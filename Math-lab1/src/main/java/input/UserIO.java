@@ -1,55 +1,52 @@
 package input;
 
-import lombok.Setter;
-import matrix.Matrix;
+import lombok.extern.java.Log;
 
-import java.util.Scanner;
+import java.util.Optional;
 
-public class UserIO implements DataReader {
-
-    @Setter
-    private Scanner scanner;
+@Log
+public class UserIO extends DataReader {
 
     @Override
-    public Matrix readData() {
-        Matrix matrix = new Matrix();
-        matrix.setMatrixValues(getMatrixValues());
-
-        int sizes = getMatrixSizes();
-        matrix.setColumnSize(sizes);
-        matrix.setRowSize(sizes);
-
-        return new Matrix();
-    }
-
-    @Override
-    public void getRequiredData(Scanner scanner) {
-        setScanner(scanner);
-    }
-
-    @Override
-    public double getEpsilon() {
-        double answerNumber;
+    protected Optional<Double[][]> getMatrixValues(int matrixSize) {
+        Double[][] newMatrix = new Double[matrixSize][matrixSize + 1];
 
         while (true) {
-            System.out.println("Write epsilon: ");
 
-            String answer = scanner.next();
-            try {
-                answerNumber = Double.parseDouble(answer);
-            } catch (NumberFormatException ignored) {
-                continue;
+            for (int i = 0; i < matrixSize; i++) {
+                System.out.print("\tInput string № " + (i + 1) + " with free elements: \n\t");
+
+                Optional<Double[]> newRow = getRow(getScanner(), matrixSize + 1);
+                if (!newRow.isPresent()) break;
+
+                newMatrix[i] = newRow.get();
+
+                if (i == matrixSize - 1) {
+                    return Optional.of(newMatrix);
+                }
             }
 
-            return answerNumber;
+            System.out.println("\tInput is incorrect! Try again: ");
         }
     }
 
-    private double[][] getMatrixValues() {
+    @Override
+    protected Optional<Integer> getMatrixSizes() {
+        while (true) {
+            System.out.print("Input matrix size: ");
 
+            Optional<Integer> newInt = getIntNumber();
+            if ((newInt.isPresent()) && (newInt.get() >= 3) && (newInt.get() <= 20)) return newInt;
+        }
     }
 
-    private int getMatrixSizes() {
+    private Optional<Integer> getIntNumber() {
 
+        String answer = super.getScanner().nextLine();
+        try {
+            return Optional.of(Integer.parseInt(answer));
+        } catch (NumberFormatException ignored) {
+            return Optional.empty();
+        }
     }
 }

@@ -5,12 +5,12 @@ import input.InputSource;
 import matrix.Matrix;
 import utility.MatrixResolver;
 
-import java.io.IOException;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         try (Scanner scanner = new Scanner(System.in)) {
 
@@ -19,35 +19,16 @@ public class Main {
             DataReader dataReader = inputSource.getConstructorFunction().create();
 
             dataReader.getRequiredData(scanner);
-            Matrix srcMatrix = dataReader.readData();
+            Optional<Matrix> srcMatrix = dataReader.readData();
 
-            //ТОчка для расширения
-            MatrixResolver matrixResolver = new MatrixResolver(srcMatrix);
-            double[] result = matrixResolver.resolve();
+            if (!srcMatrix.isPresent()) {
+                System.out.println("Unable to input matrix!");
+                return;
+            }
 
-            //Спросить что чел хочет ввести
-//            if (readAnswer(scanner, printWriter, "Хотите сами ввести матрицу?(y/n)", "y", "n")) {
-//                dataReader = new MatrixGenerator();
-//            } else {
-//                if (readAnswer(scanner, printWriter, "Укажите источник ввода(ф(айл)/р(учками))", "ф", "р")) {
-//                    java.io.File file = getFilePath(scanner, printWriter, "Введите путь к файлу:");
-//                    dataReader = new FileReader(file);
-//                } else {
-//                    dataReader = new UserIO(System.in);
-//                }
-//            }
+            MatrixResolver matrixResolver = new MatrixResolver(srcMatrix.get());
+            Optional<Double[]> result = matrixResolver.resolve();
         }
-
-//        Matrix matrix = new Matrix();
-//        MatrixResolver resolver = new MatrixResolver();
-//
-//        matrix.setMatrixValues(dataReader.readData());
-//
-//        resolver.setMatrix(matrix);
-//
-//        double[] result = resolver.resolve();
-
-
     }
 
     private static InputSource readInputSource(Scanner scanner, String query) {

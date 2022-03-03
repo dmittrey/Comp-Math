@@ -1,55 +1,37 @@
 package input;
 
-import lombok.Setter;
-import matrix.Matrix;
+import lombok.extern.java.Log;
 
-import java.util.Scanner;
+import java.util.Arrays;
+import java.util.Optional;
 
-public class MatrixGenerator implements DataReader {
+@Log
+public class MatrixGenerator extends DataReader {
 
-    @Setter
-    private Scanner scanner;
-
-    @Override
-    public Matrix readData() {
-        Matrix matrix = new Matrix();
-        matrix.setMatrixValues(getGeneratedMatrixValues());
-
-        int matrixSizes = getMatrixSizes();
-        matrix.setRowSize(matrixSizes);
-        matrix.setColumnSize(matrixSizes);
-
-        return matrix;
-    }
 
     @Override
-    public void getRequiredData(Scanner scanner) {
-        setScanner(scanner);
-    }
+    protected Optional<Double[][]> getMatrixValues(int matrixSize) {
+        Double[][] result = new Double[matrixSize][matrixSize + 1];
 
-    @Override
-    public double getEpsilon() {
-        double answerNumber;
-
-        while (true) {
-            System.out.println("Write epsilon: ");
-
-            String answer = scanner.next();
-            try {
-                answerNumber = Double.parseDouble(answer);
-            } catch (NumberFormatException ignored) {
-                continue;
+        for (int i = 0; i < matrixSize; i++) {
+            for (int j = 0; j < matrixSize + 1; j++) {
+                result[i][j] = Math.random() * 100;
             }
-
-            return answerNumber;
         }
+
+        Arrays.stream(result).forEach(
+                val -> log.info("Row: " + Arrays.toString(val))
+        );
+
+        return Optional.of(result);
     }
 
-    private int getMatrixSizes() {
+    @Override
+    protected Optional<Integer> getMatrixSizes() {
+        int size = Math.toIntExact(Math.round(Math.random() * 17 + 3));
 
-    }
+        log.info("Matrix size: " + size);
 
-    private double[][] getGeneratedMatrixValues() {
-
+        return Optional.of(size);
     }
 }
