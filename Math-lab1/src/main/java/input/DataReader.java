@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
 import matrix.Matrix;
+import utility.OutputFormatter;
 
 import java.util.Optional;
 import java.util.Scanner;
@@ -17,7 +18,12 @@ public abstract class DataReader {
     @Getter
     private Scanner scanner;
 
+    @Setter
+    @Getter
+    private OutputFormatter outputFormatter;
+
     public Optional<Matrix> readData() {
+
         Matrix matrix = new Matrix();
 
         Optional<Double> optionalEpsilon = getEpsilon();
@@ -32,8 +38,6 @@ public abstract class DataReader {
         Optional<Double[][]> optionalMatrixValues = getMatrixValues(optionalSizes.get());
         if (!optionalMatrixValues.isPresent()) return Optional.empty();
 
-//        Arrays.stream(optionalMatrixValues.get()).forEach(val -> log.info(Arrays.toString(val)));
-
         matrix.setMatrixValues(optionalMatrixValues.get());
 
         return Optional.of(matrix);
@@ -41,7 +45,7 @@ public abstract class DataReader {
 
     public Optional<Double> getEpsilon() {
         while (true) {
-            System.out.print("Write epsilon: ");
+            outputFormatter.write("Write epsilon: ");
 
             String answer = scanner.next();
             try {
@@ -54,10 +58,10 @@ public abstract class DataReader {
 
     public Optional<Double[]> getRow(Scanner openedFileScanner, int rowSize) {
 
-        String answer = (openedFileScanner.hasNextLine()) ? openedFileScanner.nextLine() : "";
+        String answer = openedFileScanner.nextLine();
 
         Double[] resultRow = new Double[rowSize];
-        Matcher m = Pattern.compile("\\d+").matcher(answer);
+        Matcher m = Pattern.compile("-?\\d+(?:\\.\\d+)?").matcher(answer);
 
         int i = 0;
         while (m.find()) {
@@ -68,8 +72,9 @@ public abstract class DataReader {
         else return Optional.empty();
     }
 
-    public void getRequiredData(Scanner scanner) {
+    public void getRequiredData(Scanner scanner, OutputFormatter outputFormatter) {
         setScanner(scanner);
+        setOutputFormatter(outputFormatter);
     }
 
     protected abstract Optional<Double[][]> getMatrixValues(int matrixSize);

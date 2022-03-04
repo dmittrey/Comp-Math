@@ -1,61 +1,42 @@
 package utility;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import matrix.Matrix;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 @RequiredArgsConstructor
-@Log
 public class MatrixResolver {
 
     private final Matrix matrix;
 
-    public Optional<Double[]> resolve() {
+    public ResolveResult resolve(OutputFormatter outputFormatter, boolean isGeneratedAutomatically) {
 
-        logOwnMatrix();
+        if (!isGeneratedAutomatically) {
+            double determinant = calculateDeterminant(matrix);
+            if (determinant == 0) return ResolveResult.DEGENERATE_MATRIX;
 
-        // Det finding
-        double determinant = calculateDeterminant(matrix);
-        log.info("Det: " + determinant);
-        if (determinant == 0) return Optional.empty();
+            getPredominanceOfDiagonalElements();
 
-        logOwnMatrix();
+            if (!isPredominanceOfDiagonalElements())
+                return ResolveResult.PREDOMINANCE_OF_DIAGONAL_ELEMENTS_CONDITION;
 
-        // Set to predominance of diagonal elements condition
-        getPredominanceOfDiagonalElements();
+            getXValues();
+        }
 
-        // Test predominance of diagonal elements condition
-        if (!isPredominanceOfDiagonalElements()) return Optional.empty();
-
-        logOwnMatrix();
-
-        // Get values
-        getXValues();
-
-        logOwnMatrix();
-
-        //Проверить условие сходимости
-        if (!isConvergenceCondition()) return Optional.empty();
+        if (!isConvergenceCondition()) return ResolveResult.COVERAGE_CONDITION_FAILED;
 
         Double[] freeElements = getFreeElements();
         Double[] previousIterationElements = getFreeElements();
         int iterationNumber = 1;
 
-        //Сам способ итеративный
-        while (calculateAnswer(matrix.getMatrixValues(), previousIterationElements, freeElements, matrix.getEpsilon(), iterationNumber)) {
+        while (calculateAnswer(matrix.getMatrixValues(), previousIterationElements, freeElements, matrix.getEpsilon(),
+                iterationNumber, outputFormatter)) {
             iterationNumber += 1;
         }
-        
-        return Optional.of(new Double[0]);
 
-    }
+        return ResolveResult.SUCCESSFUL;
 
-    //todo:dmittrey cut this method
-    private void logOwnMatrix() {
-        Arrays.stream(matrix.getMatrixValues()).forEach(val -> log.info(Arrays.toString(val)));
     }
 
     private boolean isPredominanceOfDiagonalElements() {
@@ -76,11 +57,6 @@ public class MatrixResolver {
         return true;
     }
 
-    /**
-     * У нас массив строк
-     * <p>
-     * Делаем так, чтобы выполнялось условие преобладания диагональных элементов
-     */
     private void getPredominanceOfDiagonalElements() {
 
         for (int i = 0; i < matrix.getColumnSize(); i++) {
@@ -204,9 +180,12 @@ public class MatrixResolver {
         return freeElements;
     }
 
-    public boolean calculateAnswer(Double[][] coefficientMatrix, Double[] previousIteration, Double[] freeCoefficient, double epsilon, int iterationNumber) {
+    public boolean calculateAnswer(Double[][] coefficientMatrix, Double[] previousIteration,
+                                   Double[] freeCoefficient, double epsilon,
+                                   int iterationNumber, OutputFormatter outputFormatter) {
         double resultEpsilon = Double.MIN_VALUE;
         double[] result = new double[previousIteration.length];
+        double[] epsilonArray = new double[previousIteration.length];
         for (int i = 0; i < coefficientMatrix.length; i++) {
             result[i] = 0;
             for (int j = 0; j < coefficientMatrix.length; j++) {
@@ -215,35 +194,17 @@ public class MatrixResolver {
             result[i] += freeCoefficient[i];
         }
         for (int i = 0; i < result.length; i++) {
-            if (Math.abs(result[i] - previousIteration[i]) > resultEpsilon) {
-                resultEpsilon = Math.abs(result[i] - previousIteration[i]);
+            epsilonArray[i] = Math.abs(result[i] - previousIteration[i]);
+            if (epsilonArray[i] > resultEpsilon) {
+                resultEpsilon = epsilonArray[i];
             }
             previousIteration[i] = result[i];
         }
-        printFormatAnswer(result, resultEpsilon);
         if (resultEpsilon > epsilon) {
             return true;
         } else {
-            printAnswer(result, resultEpsilon, iterationNumber);
+            outputFormatter.printAnswer(result, epsilonArray, iterationNumber);
             return false;
         }
-    }
-
-    public void printFormatAnswer(double[] answers, double epsilon) {
-        for (double answer : answers) {
-            System.out.format(" %f", answer);
-        }
-        System.out.format(" %f", epsilon);
-        System.out.println();
-        System.out.println("-----------------------------");
-    }
-
-    public void printAnswer(double[] result, double epsilon, int iterationNumber) {
-        System.out.println("Ответ:");
-        for (int i = 1; i <= result.length; i++) {
-            System.out.println("x" + i + " = " + result[i - 1]);
-        }
-        System.out.println("Конечная точность: " + epsilon);
-        System.out.println("Номер итерации: " + iterationNumber);
     }
 }

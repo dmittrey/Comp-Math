@@ -4,6 +4,7 @@ import input.DataReader;
 import input.InputSource;
 import matrix.Matrix;
 import utility.MatrixResolver;
+import utility.OutputFormatter;
 
 import java.util.Optional;
 import java.util.Scanner;
@@ -14,28 +15,30 @@ public class Main {
 
         try (Scanner scanner = new Scanner(System.in)) {
 
-            InputSource inputSource = readInputSource(scanner, "Enter source of matrix input");
+            OutputFormatter outputFormatter = new OutputFormatter();
+
+            InputSource inputSource = readInputSource(scanner);
 
             DataReader dataReader = inputSource.getConstructorFunction().create();
 
-            dataReader.getRequiredData(scanner);
+            dataReader.getRequiredData(scanner, outputFormatter);
             Optional<Matrix> srcMatrix = dataReader.readData();
 
             if (!srcMatrix.isPresent()) {
-                System.out.println("Unable to input matrix!");
+                outputFormatter.printUnableToInputMatrix();
                 return;
             }
 
             MatrixResolver matrixResolver = new MatrixResolver(srcMatrix.get());
-            Optional<Double[]> result = matrixResolver.resolve();
+
+            outputFormatter.printResolveResult(matrixResolver.resolve(outputFormatter,
+                    inputSource == InputSource.GENERATOR));
         }
     }
 
-    private static InputSource readInputSource(Scanner scanner, String query) {
-
+    private static InputSource readInputSource(Scanner scanner) {
         while (true) {
-
-            System.out.print(query);
+            System.out.print("Enter source of matrix input");
 
             System.out.print("[");
             for (InputSource option : InputSource.values()) {
