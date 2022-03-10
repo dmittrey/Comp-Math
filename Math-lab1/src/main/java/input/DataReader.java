@@ -2,7 +2,6 @@ package input;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.java.Log;
 import matrix.Matrix;
 import utility.OutputFormatter;
 
@@ -11,7 +10,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Log
 public abstract class DataReader {
 
     @Setter
@@ -79,5 +77,20 @@ public abstract class DataReader {
 
     protected abstract Optional<Double[][]> getMatrixValues(int matrixSize);
 
-    protected abstract Optional<Integer> getMatrixSizes();
+    protected Optional<Integer> getMatrixSizes() {
+        System.out.print("Input matrix size: ");
+        while (true) {
+            Optional<Integer> newInt = getIntNumber();
+            if ((newInt.isPresent()) && (newInt.get() >= 3) && (newInt.get() <= 20)) return newInt;
+        }
+    }
+
+    private Optional<Integer> getIntNumber() {
+        String answer = scanner.nextLine();
+        try {
+            return Optional.of(Integer.parseInt(answer));
+        } catch (NumberFormatException ignored) {
+            return Optional.empty();
+        }
+    }
 }

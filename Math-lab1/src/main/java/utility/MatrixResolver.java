@@ -1,10 +1,12 @@
 package utility;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import matrix.Matrix;
 
 import java.util.Arrays;
 
+@Log
 @RequiredArgsConstructor
 public class MatrixResolver {
 
@@ -14,7 +16,8 @@ public class MatrixResolver {
 
         if (!isGeneratedAutomatically) {
             double determinant = calculateDeterminant(matrix);
-            if (determinant == 0) return ResolveResult.DEGENERATE_MATRIX;
+
+            if (Double.isNaN(determinant) || determinant == 0) return ResolveResult.DEGENERATE_MATRIX;
 
             getPredominanceOfDiagonalElements();
 

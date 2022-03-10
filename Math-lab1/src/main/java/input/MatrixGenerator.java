@@ -4,7 +4,6 @@ import java.util.Optional;
 
 public class MatrixGenerator extends DataReader {
 
-
     @Override
     protected Optional<Double[][]> getMatrixValues(int matrixSize) {
         Double[][] result = new Double[matrixSize][matrixSize + 1];
@@ -27,11 +26,5 @@ public class MatrixGenerator extends DataReader {
         super.getOutputFormatter().printMatrixValues(result);
 
         return Optional.of(result);
-    }
-
-    @Override
-    protected Optional<Integer> getMatrixSizes() {
-
-        return Optional.of(20);
     }
 }
