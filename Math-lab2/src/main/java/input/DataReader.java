@@ -2,13 +2,17 @@ package input;
 
 import dto.ReadEquation;
 import dto.ReadStatus;
+import dto.Slice;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 import utility.OutputFormatter;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+@Log
 public abstract class DataReader {
 
     @Setter
@@ -19,16 +23,21 @@ public abstract class DataReader {
     @Getter
     private OutputFormatter outputFormatter;
 
+//todo отдебажить методы решения
     public ReadEquation readData() {
 
         ReadEquation readEquation = new ReadEquation();
         readEquation.setReadStatus(ReadStatus.EPSILON_NOT_FOUND);
         getEpsilon().ifPresent(epsilon -> {
             readEquation.getEquation().setEpsilon(epsilon);
-            readEquation.setReadStatus(ReadStatus.EQUATION_COEFFICIENTS_NOT_FOUND);
-            getEquationCoefficients().ifPresent(equationCoefficients -> {
-                readEquation.getEquation().setEquationCoefficients(equationCoefficients);
-                readEquation.setReadStatus(ReadStatus.SUCCESSFUL);
+            readEquation.setReadStatus(ReadStatus.SLICE_NOT_FOUND);
+            getSlice().ifPresent(slice -> {
+                readEquation.getEquation().setSlice(slice);
+                readEquation.setReadStatus(ReadStatus.EQUATION_COEFFICIENTS_NOT_FOUND);
+                getEquationCoefficients().ifPresent(equationCoefficients -> {
+                    readEquation.getEquation().setEquationCoefficients(equationCoefficients);
+                    readEquation.setReadStatus(ReadStatus.SUCCESSFUL);
+                });
             });
         });
 
@@ -41,10 +50,28 @@ public abstract class DataReader {
         return (scanner.hasNextDouble()) ? Optional.of(scanner.nextDouble()) : Optional.empty();
     }
 
+    public Optional<Slice> getSlice() {
+
+        double start;
+        double stop;
+
+        outputFormatter.write("Enter start of slice: ");
+        if (scanner.hasNextDouble()) start = scanner.nextDouble();
+        else if (scanner.hasNextInt()) start = scanner.nextInt();
+        else return Optional.empty();
+
+        outputFormatter.write("Enter end of slice: ");
+        if (scanner.hasNextDouble()) stop = scanner.nextDouble();
+        else if (scanner.hasNextInt()) stop = scanner.nextInt();
+        else return Optional.empty();
+
+        return Optional.of(new Slice(start, stop));
+    }
+
     public void getRequiredData(Scanner scanner, OutputFormatter outputFormatter) {
         setScanner(scanner);
         setOutputFormatter(outputFormatter);
     }
 
-    protected abstract Optional<Double[]> getEquationCoefficients();
+    protected abstract Optional<List<Double>> getEquationCoefficients();
 }

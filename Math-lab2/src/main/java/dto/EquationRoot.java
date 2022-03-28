@@ -1,11 +1,11 @@
 package dto;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class EquationRoot {
 
-    private Double x;
-    private Double y;
-    private Integer count;
+    Double x;
+    Double y;
+    Integer count;
 }

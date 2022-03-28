@@ -1,6 +1,7 @@
 package utility;
 
 import dto.EquationRoot;
+import dto.ReadStatus;
 import dto.ResolveResult;
 import lombok.extern.java.Log;
 
@@ -20,6 +21,15 @@ public class OutputFormatter {
         System.out.println("X: " + equationRoot.getX() +
                 "Y: " + equationRoot.getY() +
                 "Count: " + equationRoot.getCount());
+    }
+
+    public void printReadStatus(ReadStatus readStatus) {
+        switch (readStatus){
+            case EQUATION_COEFFICIENTS_NOT_FOUND -> System.out.println("Equation coefficients not found!");
+            case EPSILON_NOT_FOUND -> System.out.println("Epsilon not found!");
+            case SLICE_NOT_FOUND -> System.out.println("Slice not found!");
+            default -> System.out.println("All right!");
+        }
     }
 
     public void write(String expression) {

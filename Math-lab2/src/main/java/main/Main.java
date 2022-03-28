@@ -1,12 +1,13 @@
 package main;
 
+import dto.ReadEquation;
 import input.DataReader;
 import input.InputSource;
-import dto.Equation;
+import utility.EquationResolver;
+import utility.resolvers.FixedPointIterationMethodResolver;
 import utility.resolvers.SecantMethodResolver;
 import utility.OutputFormatter;
 
-import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
@@ -20,26 +21,22 @@ public class Main {
             InputSource inputSource = readInputSource(scanner);
 
             DataReader dataReader = inputSource.getConstructorFunction().create();
+
+            System.out.println(dataReader.getClass().getName());
+
             dataReader.getRequiredData(scanner, outputFormatter);
 
-            dataReader.readData().ifPresent(data -> {
-                SecantMethodResolver secantMethodResolver = new SecantMethodResolver(data);
+            EquationResolver equationResolver = new EquationResolver();
+            equationResolver.addResolveMethod(new SecantMethodResolver());
+            equationResolver.addResolveMethod(new FixedPointIterationMethodResolver());
 
-                outputFormatter.printResolveResult(secantMethodResolver.resolve(outputFormatter,
-                        inputSource == InputSource.GENERATOR));
-            });
+            ReadEquation newEquation = dataReader.readData();
 
-            Optional<Equation> srcEquation = dataReader.readData();
-
-            if (!srcEquation.isPresent()) {
-                outputFormatter.printUnableToInputMatrix();
-                return;
+            if (newEquation.isSuccessful()) {
+                equationResolver.resolve(newEquation.getEquation()).forEach(System.out::println);
+            } else {
+                outputFormatter.printReadStatus(newEquation.getReadStatus());
             }
-
-            SecantMethodResolver secantMethodResolver = new SecantMethodResolver(srcMatrix.get());
-
-            outputFormatter.printResolveResult(secantMethodResolver.resolve(outputFormatter,
-                    inputSource == InputSource.GENERATOR));
         }
     }
 

@@ -6,15 +6,12 @@ import utility.OutputFormatter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 @Setter
 public class FileReader extends DataReader {
 
-    Scanner openedScanner;
+    private Scanner openedScanner;
 
     @Override
     public void getRequiredData(Scanner scanner, OutputFormatter outputFormatter) {
@@ -41,14 +38,14 @@ public class FileReader extends DataReader {
     }
 
     @Override
-    protected Optional<Double[]> getEquationCoefficients() {
+    protected Optional<List<Double>> getEquationCoefficients() {
         ArrayList<Double> result = new ArrayList<>();
         while (openedScanner.hasNextDouble()) {
             result.add(openedScanner.nextDouble());
         }
         Collections.reverse(result);
 
-        return (result.isEmpty()) ? Optional.of(result.toArray(new Double[0])) : Optional.empty();
+        return (result.isEmpty()) ? Optional.of(result) : Optional.empty();
     }
 
     @Override

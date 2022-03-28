@@ -1,19 +1,36 @@
 package input;
 
+import lombok.extern.java.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+@Log
 public class UserIO extends DataReader {
     @Override
-    protected Optional<Double[]> getEquationCoefficients() {
+    protected Optional<List<Double>> getEquationCoefficients() {
 
-        ArrayList<Double> result = new ArrayList<>();
-        while (getScanner().hasNextDouble()) {
-            result.add(getScanner().nextDouble());
+        getOutputFormatter().write("Write coefficients: ");
+
+        List<Double> allMatches = new ArrayList<>();
+
+        while (getScanner().hasNextLine()) {
+            Matcher m = Pattern.compile("-?\\d+(\\.\\d+)?")
+                    .matcher(getScanner().nextLine());
+            while (m.find()) {
+                allMatches.add(Double.parseDouble(m.group()));
+            }
+
+            if (!allMatches.isEmpty()) {
+                Collections.reverse(allMatches);
+                return Optional.of(allMatches);
+            }
         }
-        Collections.reverse(result);
 
-        return (result.isEmpty()) ? Optional.of(result.toArray(new Double[0])) : Optional.empty();
+        return Optional.empty();
     }
 }
