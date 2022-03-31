@@ -35,7 +35,7 @@ public abstract class DataReader {
                 readEquation.getEquation().setSlice(slice);
                 readEquation.setReadStatus(ReadStatus.EQUATION_COEFFICIENTS_NOT_FOUND);
                 getEquationCoefficients().ifPresent(equationCoefficients -> {
-                    readEquation.getEquation().setEquationCoefficients(equationCoefficients);
+//                    readEquation.getEquation().setEquationCoefficients(equationCoefficients);
                     readEquation.setReadStatus(ReadStatus.SUCCESSFUL);
                 });
             });

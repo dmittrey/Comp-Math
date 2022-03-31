@@ -1,24 +1,19 @@
 package input;
 
+import lombok.Getter;
+
+@Getter
 public enum InputSource {
     CONSOLE("Console", UserIO::new),
     GENERATOR("Generator", MatrixGenerator::new),
     FILE("File", FileReader::new);
 
     private final String description;
-    private final DataReaderConstructorFunction dataReaderInitFunction;
+    private final ObjectConstructorFunction<DataReader> dataReaderInitFunction;
 
-    InputSource(String aDescription, DataReaderConstructorFunction aDataReaderInitFunction) {
+    InputSource(String aDescription, ObjectConstructorFunction<DataReader> aDataReaderInitFunction) {
         description = aDescription;
         dataReaderInitFunction = aDataReaderInitFunction;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public DataReaderConstructorFunction getConstructorFunction() {
-        return dataReaderInitFunction;
     }
 
     public static InputSource getConstant(String description) {

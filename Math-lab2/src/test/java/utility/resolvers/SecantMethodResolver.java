@@ -1,9 +1,9 @@
 package utility.resolvers;
 
+import dto.Equation;
 import dto.EquationRoot;
 import dto.Slice;
 import lombok.extern.java.Log;
-import dto.Equation;
 
 import java.util.function.DoubleFunction;
 import java.util.function.Function;
@@ -31,6 +31,11 @@ public class SecantMethodResolver implements Function<Equation, EquationRoot> {
             crossX = getCrossXValue(equation.getMappingFunction(), equationSlice);
             crossY = equation.getMappingFunction().apply(crossX);
             equationSlice = getUsefulSlice(new Slice(equationSlice.getStart(), crossX), new Slice(crossX, equationSlice.getStop()));
+//
+//            log.info("previousCrossX" + previousCrossX);
+//            log.info("crossX" + crossX);
+//            log.info("crossY" + crossY);
+//            log.info("equationSlice" + equationSlice);
         } while (Math.abs(previousCrossX - crossX) > equation.getEpsilon());
 
         return new EquationRoot(crossX, crossY, counter);

@@ -3,7 +3,7 @@ package main;
 import dto.ReadEquation;
 import input.DataReader;
 import input.InputSource;
-import utility.EquationResolver;
+import utility.equations.EquationResolver;
 import utility.resolvers.FixedPointIterationMethodResolver;
 import utility.resolvers.SecantMethodResolver;
 import utility.OutputFormatter;
@@ -20,7 +20,7 @@ public class Main {
 
             InputSource inputSource = readInputSource(scanner);
 
-            DataReader dataReader = inputSource.getConstructorFunction().create();
+            DataReader dataReader = inputSource.getDataReaderInitFunction().create();
 
             System.out.println(dataReader.getClass().getName());
 

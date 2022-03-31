@@ -1,4 +1,4 @@
-package utility;
+package utility.equations;
 
 import dto.Equation;
 import dto.EquationRoot;
