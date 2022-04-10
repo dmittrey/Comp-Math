@@ -2,14 +2,13 @@ package utility.resolvers;
 
 import dto.Equation;
 import dto.EquationRoot;
+import dto.EquationSystem;
 import dto.Slice;
 import lombok.extern.java.Log;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import utility.equations.EquationFactory;
 import utility.equations.EquationTypes;
-
-import java.util.List;
+import utility.resolvers.system.FixedPointIterationMethodSystemResolver;
 
 /**
  * Метод простых итераций
@@ -40,6 +39,17 @@ class FixedPointIterationMethodTest {
     }
 
     @Test
+    void anotherTest() {
+        EquationSystem equationSystem = EquationFactory.getSystem();
+        equationSystem.setEpsilon(0.01);
+        equationSystem.setSlice(new Slice(0., 1.));
+
+        FixedPointIterationMethodSystemResolver fixedPointIterationMethodResolver = new FixedPointIterationMethodSystemResolver();
+
+        log.info(fixedPointIterationMethodResolver.apply(equationSystem).getEquationRootList().toString());
+    }
+
+    @Test
     void testMappingFunction() {
         fillEquation1();
 
@@ -51,6 +61,6 @@ class FixedPointIterationMethodTest {
         log.info("Setting equation 1");
         testeeEquation.setSlice(new Slice(-2, -1));
         testeeEquation.setEpsilon(0.01);
-        testeeEquation = EquationTypes.FIRST_EQUATION.getEquationInitFunction().apply(testeeEquation);
+        testeeEquation = EquationTypes.SECOND_EQUATION.getEquationInitFunction().apply(testeeEquation);
     }
 }

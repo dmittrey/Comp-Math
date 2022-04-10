@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum InputSource {
-    CONSOLE("Console", UserIO::new),
-    GENERATOR("Generator", MatrixGenerator::new),
-    FILE("File", FileReader::new);
+    CONSOLE("Console", UserIO::new);
+//    GENERATOR("Generator", MatrixGenerator::new),
+//    FILE("File", FileReader::new);
 
     private final String description;
     private final ObjectConstructorFunction<DataReader> dataReaderInitFunction;
@@ -19,8 +19,8 @@ public enum InputSource {
     public static InputSource getConstant(String description) {
         return switch (description) {
             case "Console" -> CONSOLE;
-            case "Generator" -> GENERATOR;
-            case "File" -> FILE;
+//            case "Generator" -> GENERATOR;
+//            case "File" -> FILE;
             default -> null;
         };
     }

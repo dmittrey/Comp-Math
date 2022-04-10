@@ -1,16 +1,23 @@
 package main;
 
+import dto.EquationSystem;
 import dto.ReadEquation;
 import input.DataReader;
 import input.InputSource;
+import lombok.extern.java.Log;
+import utility.equations.EquationFactory;
 import utility.equations.EquationResolver;
+import utility.equations.EquationSystemsTypes;
 import utility.resolvers.FixedPointIterationMethodResolver;
 import utility.resolvers.SecantMethodResolver;
 import utility.OutputFormatter;
+import utility.resolvers.system.FixedPointIterationMethodSystemResolver;
 
 import java.util.Scanner;
 
+@Log
 public class Main {
+    //todo Отчёт
 
     public static void main(String[] args) {
 
@@ -18,11 +25,7 @@ public class Main {
 
             OutputFormatter outputFormatter = new OutputFormatter();
 
-            InputSource inputSource = readInputSource(scanner);
-
-            DataReader dataReader = inputSource.getDataReaderInitFunction().create();
-
-            System.out.println(dataReader.getClass().getName());
+            DataReader dataReader = InputSource.CONSOLE.getDataReaderInitFunction().create();
 
             dataReader.getRequiredData(scanner, outputFormatter);
 
@@ -33,26 +36,22 @@ public class Main {
             ReadEquation newEquation = dataReader.readData();
 
             if (newEquation.isSuccessful()) {
-                equationResolver.resolve(newEquation.getEquation()).forEach(System.out::println);
+                equationResolver.resolve(newEquation.getEquation());
             } else {
                 outputFormatter.printReadStatus(newEquation.getReadStatus());
             }
-        }
-    }
 
-    private static InputSource readInputSource(Scanner scanner) {
-        while (true) {
-            System.out.print("Enter source of matrix input");
+            EquationSystem equationSystem = EquationFactory.getSystem();
+            ReadEquation readEquation = dataReader.readWithoutEquationsData();
+            equationSystem.setEpsilon(readEquation.getEquation().getEpsilon());
+            equationSystem.setFirstVariables(readEquation.getVariables());
 
-            System.out.print("[");
-            for (InputSource option : InputSource.values()) {
-                System.out.printf(" %s ", option.getDescription());
-            }
-            System.out.print("]: ");
+            System.out.println(EquationSystemsTypes.FIRST_SYSTEM.getDescription());
 
-            InputSource source = InputSource.getConstant(scanner.nextLine());
-
-            if (source != null) return source;
+            FixedPointIterationMethodSystemResolver fixedPointIterationMethodSystemResolver = new FixedPointIterationMethodSystemResolver();
+            fixedPointIterationMethodSystemResolver.apply(equationSystem)
+                    .getEquationRootList()
+                    .forEach(System.out::println);
         }
     }
 }

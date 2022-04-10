@@ -17,23 +17,21 @@ public class SecantMethodResolver implements Function<Equation, EquationRoot> {
     @Override
     public EquationRoot apply(Equation equation) {
 
-        log.info("Equation" + equation.toString());
-
         Slice equationSlice = equation.getSlice();
         double previousCrossX;
         double crossX = 0;
-        double crossY;
         int counter = 0;
 
         do {
             previousCrossX = (counter++ != 0) ? crossX : equationSlice.getStop() + 2 * equation.getEpsilon();
 
             crossX = getCrossXValue(equation.getMappingFunction(), equationSlice);
-            crossY = equation.getMappingFunction().apply(crossX);
             equationSlice = getUsefulSlice(new Slice(equationSlice.getStart(), crossX), new Slice(crossX, equationSlice.getStop()));
         } while (Math.abs(previousCrossX - crossX) > equation.getEpsilon());
 
-        return new EquationRoot(crossX, crossY, counter);
+        System.out.println("Secant method: x = " + crossX + " :: Count = " + counter);
+
+        return new EquationRoot(crossX, counter);
     }
 
     private double getCrossXValue(DoubleFunction<Double> function, Slice equationSlice) {

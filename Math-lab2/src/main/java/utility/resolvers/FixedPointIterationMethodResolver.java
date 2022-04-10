@@ -25,10 +25,11 @@ public class FixedPointIterationMethodResolver implements Function<Equation, Equ
             count++;
             previousX = newX;
             newX = phi.apply(previousX);
-//            log.info("Count " + count + " :: previousX " + previousX + " :: newX " + newX);
         } while (isIterationNotEnd(previousX, newX, equation.getEpsilon()));
 
-        return new EquationRoot(newX, equation.getMappingFunction().apply(newX), count);
+        System.out.println("Iteration method: x = " + newX + " :: Count = " + count);
+
+        return new EquationRoot(newX, count);
     }
 
     private boolean isIterationNotEnd(double previousX, double newX, double epsilon) {

@@ -19,12 +19,11 @@ public class OutputFormatter {
     public void printAnswer(EquationRoot equationRoot) {
         System.out.println("Answer:");
         System.out.println("X: " + equationRoot.getX() +
-                "Y: " + equationRoot.getY() +
                 "Count: " + equationRoot.getCount());
     }
 
     public void printReadStatus(ReadStatus readStatus) {
-        switch (readStatus){
+        switch (readStatus) {
             case EQUATION_COEFFICIENTS_NOT_FOUND -> System.out.println("Equation coefficients not found!");
             case EPSILON_NOT_FOUND -> System.out.println("Epsilon not found!");
             case SLICE_NOT_FOUND -> System.out.println("Slice not found!");

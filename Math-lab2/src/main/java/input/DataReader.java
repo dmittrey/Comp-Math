@@ -8,9 +8,12 @@ import lombok.Setter;
 import lombok.extern.java.Log;
 import utility.OutputFormatter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Log
 public abstract class DataReader {
@@ -23,7 +26,6 @@ public abstract class DataReader {
     @Getter
     private OutputFormatter outputFormatter;
 
-//todo отдебажить методы решения
     public ReadEquation readData() {
 
         ReadEquation readEquation = new ReadEquation();
@@ -33,11 +35,24 @@ public abstract class DataReader {
             readEquation.setReadStatus(ReadStatus.SLICE_NOT_FOUND);
             getSlice().ifPresent(slice -> {
                 readEquation.getEquation().setSlice(slice);
-                readEquation.setReadStatus(ReadStatus.EQUATION_COEFFICIENTS_NOT_FOUND);
-                getEquationCoefficients().ifPresent(equationCoefficients -> {
-//                    readEquation.getEquation().setEquationCoefficients(equationCoefficients);
-                    readEquation.setReadStatus(ReadStatus.SUCCESSFUL);
-                });
+                getEquation(readEquation);
+                readEquation.setReadStatus(ReadStatus.SUCCESSFUL);
+            });
+        });
+
+        return readEquation;
+    }
+
+    public ReadEquation readWithoutEquationsData() {
+
+        ReadEquation readEquation = new ReadEquation();
+        readEquation.setReadStatus(ReadStatus.EPSILON_NOT_FOUND);
+        getEpsilon().ifPresent(epsilon -> {
+            readEquation.getEquation().setEpsilon(epsilon);
+            readEquation.setReadStatus(ReadStatus.SLICE_NOT_FOUND);
+            getFirstVariables().ifPresent(variables -> {
+                readEquation.setVariables(variables);
+                readEquation.setReadStatus(ReadStatus.SUCCESSFUL);
             });
         });
 
@@ -68,10 +83,31 @@ public abstract class DataReader {
         return Optional.of(new Slice(start, stop));
     }
 
+    public Optional<List<Double>> getFirstVariables() {
+
+        getOutputFormatter().write("Write first variables: ");
+
+        List<Double> allMatches = new ArrayList<>();
+
+        while (getScanner().hasNextLine()) {
+            Matcher m = Pattern.compile("-?\\d+(\\.\\d+)?")
+                    .matcher(getScanner().nextLine());
+            while (m.find()) {
+                allMatches.add(Double.parseDouble(m.group()));
+            }
+
+            if (!allMatches.isEmpty()) {
+                return Optional.of(allMatches);
+            }
+        }
+
+        return Optional.empty();
+    }
+
     public void getRequiredData(Scanner scanner, OutputFormatter outputFormatter) {
         setScanner(scanner);
         setOutputFormatter(outputFormatter);
     }
 
-    protected abstract Optional<List<Double>> getEquationCoefficients();
+    protected abstract void getEquation(ReadEquation readEquation);
 }

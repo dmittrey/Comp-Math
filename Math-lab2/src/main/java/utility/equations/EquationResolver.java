@@ -17,10 +17,8 @@ public class EquationResolver {
         resolveMethods.add(resolveMethod);
     }
 
-    public List<EquationRoot> resolve(Equation equation) {
-        ArrayList<EquationRoot> equationRoots = new ArrayList<>();
+    public void resolve(Equation equation) {
         resolveMethods
-                .forEach(resolveMethod -> equationRoots.add(resolveMethod.apply(equation)));
-        return equationRoots;
+                .forEach(resolveMethod -> resolveMethod.apply(equation));
     }
 }

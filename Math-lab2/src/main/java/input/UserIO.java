@@ -1,36 +1,32 @@
 package input;
 
+import dto.ReadEquation;
 import lombok.extern.java.Log;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import utility.equations.EquationTypes;
 
 @Log
 public class UserIO extends DataReader {
     @Override
-    protected Optional<List<Double>> getEquationCoefficients() {
+    protected void getEquation(ReadEquation readEquation) {
 
-        getOutputFormatter().write("Write coefficients: ");
+        System.out.println("******************************");
 
-        List<Double> allMatches = new ArrayList<>();
-
-        while (getScanner().hasNextLine()) {
-            Matcher m = Pattern.compile("-?\\d+(\\.\\d+)?")
-                    .matcher(getScanner().nextLine());
-            while (m.find()) {
-                allMatches.add(Double.parseDouble(m.group()));
-            }
-
-            if (!allMatches.isEmpty()) {
-                Collections.reverse(allMatches);
-                return Optional.of(allMatches);
-            }
+        int count = 0;
+        for (EquationTypes type : EquationTypes.values()) {
+            System.out.println(count++ + " : " + type.getDescription());
         }
 
-        return Optional.empty();
+        System.out.print("Choose equation: ");
+
+        while (true) {
+            try {
+                int chosenInt = getScanner().nextInt();
+                if (chosenInt >= 0 && chosenInt < EquationTypes.values().length) {
+                    EquationTypes.values()[chosenInt].getEquationInitFunction().apply(readEquation.getEquation());
+                    break;
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
     }
 }
