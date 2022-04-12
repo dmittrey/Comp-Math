@@ -23,7 +23,7 @@ public class Console {
         while (true){
             if (scanner.hasNextInt()) {
                 int value = scanner.nextInt();
-                if (value >= startValue && value <= endValue) return new InputResult<>(ReadStatus.SUCCESSFUL, scanner.nextInt());
+                if (value >= startValue && value <= endValue) return new InputResult<>(ReadStatus.SUCCESSFUL, value);
             } else
                 return InputResult.getIncorrectInputResult(ReadStatus.END_OF_STREAM);
         }
