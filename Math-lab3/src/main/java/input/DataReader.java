@@ -8,7 +8,7 @@ public interface DataReader {
 
     InputResult<Double> readEpsilon();
 
-    InputResult<Double> readSliceCount();
+    InputResult<Integer> readFunctionChoice(int countOfFunctions);
 
     InputResult<List<Double>> readSlicePoints();
 }

@@ -12,12 +12,12 @@ public class IOReader implements DataReader {
 
     @Override
     public InputResult<Double> readEpsilon() {
-        return console.readDouble();
+        return console.readIntOrDouble();
     }
 
     @Override
-    public InputResult<Double> readSliceCount() {
-        return console.readDouble();
+    public InputResult<Integer> readFunctionChoice(int countOfFunctions) {
+        return console.readIntInRange(1, countOfFunctions);
     }
 
     @Override
