@@ -34,7 +34,7 @@ public class Main {
 
             if (checkInputResultsForAvailable(functionNumber, sliceRange, epsilon)) {
                 Function function = new Function(
-                        Functions.values()[functionNumber.getReadValue()],
+                        Functions.values()[functionNumber.getReadValue() - 1],
                         new Slice(sliceRange.getReadValue())
                 );
 
