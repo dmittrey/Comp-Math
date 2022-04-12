@@ -1,9 +1,10 @@
 package utility.resolvemethods;
 
 import dto.Function;
-import exceptions.SecondGapException;
+
+import java.util.concurrent.ExecutionException;
 
 @FunctionalInterface
 public interface ResolveMethod {
-    Double resolve(Function function, double countOfSlices, double epsilon) throws SecondGapException;
+    Double resolve(Function function, double epsilon) throws ExecutionException;
 }
