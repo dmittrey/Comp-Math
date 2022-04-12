@@ -11,7 +11,7 @@ public enum Functions implements DoubleFunction<Double> {
     }),
     FUNCTION_THREE(value -> Math.abs(1 / (value - 2)));
 
-    private DoubleFunction<Double> function;
+    private final DoubleFunction<Double> function;
 
     Functions(DoubleFunction<Double> function) {
         this.function = function;
