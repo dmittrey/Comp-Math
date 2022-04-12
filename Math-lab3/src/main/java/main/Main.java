@@ -20,10 +20,11 @@ import java.util.concurrent.ExecutionException;
 public class Main {
 
     public static void main(String[] args) {
+        FormattingWriter formattingWriter = new FormattingWriter(System.out);
+
         try (Scanner scanner = new Scanner(System.in)) {
 
             Console console = new Console(scanner);
-            FormattingWriter formattingWriter = new FormattingWriter(System.out);
             IOReader ioReader = new IOReader(console, formattingWriter);
 
             ResolveMethod trapezoidMethod = new TrapezoidMethod();
@@ -41,7 +42,8 @@ public class Main {
                 formattingWriter.printAnswer(
                         trapezoidMethod.resolve(
                                 function,
-                                epsilon.getReadValue()
+                                epsilon.getReadValue(),
+                                formattingWriter
                         ).toString()
                 );
 
@@ -49,7 +51,7 @@ public class Main {
                 formattingWriter.printWarning("Something went wrong!");
             }
         } catch (ExecutionException e) {
-            log.info(e.getMessage());
+            formattingWriter.printRed("Non-removable discontinuity found in point, where x = 2.0!");
         }
     }
 
