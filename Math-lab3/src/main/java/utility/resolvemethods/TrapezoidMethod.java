@@ -2,9 +2,7 @@ package utility.resolvemethods;
 
 import dto.Function;
 import exceptions.SecondGapException;
-import lombok.extern.java.Log;
 
-@Log
 public class TrapezoidMethod implements ResolveMethod {
 
     private static final double EPSILON = Math.pow(10, -9);
@@ -21,8 +19,6 @@ public class TrapezoidMethod implements ResolveMethod {
              currentPoint += stepDist) {
             sumOfFunctionResults += bridgeGap(function, currentPoint);
         }
-
-        log.info(String.valueOf(sumOfFunctionResults));
 
         return stepDist / 2 * (function.getOwnFunction().apply(function.getSlice().getStartPoint())
                 + function.getOwnFunction().apply(function.getSlice().getStopPoint())
