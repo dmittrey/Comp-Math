@@ -2,11 +2,10 @@ package dto.input;
 
 import input.ReadStatus;
 import lombok.Value;
-
-import java.util.function.Consumer;
+import utility.Correctness;
 
 @Value
-public class InputResult<T> {
+public class InputResult<T> implements Correctness {
     ReadStatus readStatus;
     T readValue;
 
@@ -14,15 +13,8 @@ public class InputResult<T> {
         return new InputResult<>(readStatus, null);
     }
 
+    @Override
     public boolean isIncorrect() {
         return readStatus != ReadStatus.SUCCESSFUL;
-    }
-
-    public void ifPresentOrElse(Consumer<? super T> action, Runnable emptyAction) {
-        if (isIncorrect()) {
-            emptyAction.run();
-        } else {
-            action.accept(readValue);
-        }
     }
 }
