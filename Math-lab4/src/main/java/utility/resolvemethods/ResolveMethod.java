@@ -1,11 +1,10 @@
 package utility.resolvemethods;
 
-import dto.Function;
-import utility.outputformatting.FirstGapNotifier;
+import dto.Point;
 
-import java.util.concurrent.ExecutionException;
+import java.util.Set;
 
 @FunctionalInterface
 public interface ResolveMethod {
-    Double resolve(Function function, double epsilon, FirstGapNotifier notifyFunc) throws ExecutionException;
+    Double resolve(Set<Point> interpolatingPoints);
 }
