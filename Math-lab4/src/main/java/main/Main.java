@@ -27,31 +27,6 @@ public class Main {
             Console console = new Console(scanner);
             IOReader ioReader = new IOReader(console, formattingWriter);
 
-            ResolveMethod trapezoidMethod = new TrapezoidMethod();
-
-            InputResult<Integer> functionNumber = ioReader.readFunctionChoice(Functions.values().length);
-            InputResult<List<Double>> sliceRange = ioReader.readSlicePoints();
-            InputResult<Double> epsilon = ioReader.readEpsilon();
-
-            if (checkInputResultsForAvailable(functionNumber, sliceRange, epsilon)) {
-                Function function = new Function(
-                        Functions.values()[functionNumber.getReadValue() - 1],
-                        new Slice(sliceRange.getReadValue())
-                );
-
-                formattingWriter.printAnswer(
-                        trapezoidMethod.resolve(
-                                function,
-                                epsilon.getReadValue(),
-                                formattingWriter
-                        ).toString()
-                );
-
-            } else {
-                formattingWriter.printWarning("Something went wrong!");
-            }
-        } catch (ExecutionException e) {
-            formattingWriter.printRed("Non-removable discontinuity found in point, where x = 2.0!");
         }
     }
 
